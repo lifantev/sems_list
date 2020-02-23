@@ -15,5 +15,7 @@ typedef struct Node
 
 int main() 
 {
+    Node** list = NULL;
+    
     return 0;
 }

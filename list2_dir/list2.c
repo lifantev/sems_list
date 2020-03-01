@@ -13,7 +13,7 @@ typedef struct Node
     struct Node *prev;
 } Node;
 
-int is_empty(Node *list)
+int list_is_empty(Node *list)
 {
     if (list == NULL)
     {
@@ -24,9 +24,9 @@ int is_empty(Node *list)
     return (list->next == list) && (list->prev == list);
 }
 
-void print(Node *list)
+void list_print(Node *list)
 {
-    if (is_empty(list))
+    if (list_is_empty(list))
     {
         puts("Empty list");
         return;
@@ -37,9 +37,9 @@ void print(Node *list)
     puts("");
 }
 
-void print_back(Node *list)
+void list_print_back(Node *list)
 {
-    if (is_empty(list))
+    if (list_is_empty(list))
     {
         puts("Empty list");
         return;
@@ -50,9 +50,9 @@ void print_back(Node *list)
     puts("");
 }
 
-void print_dbg(Node *list)
+void list_print_dbg(Node *list)
 {
-    if (is_empty(list))
+    if (list_is_empty(list))
     {
         puts("Empty list");
         return;
@@ -66,7 +66,7 @@ void print_dbg(Node *list)
     puts("");
 }
 
-void insert_after(Node *left, Node *new)
+void list_insert(Node *left, Node *new)
 {
     Node *right = left->next;
     new->prev = left;
@@ -75,12 +75,12 @@ void insert_after(Node *left, Node *new)
     right->prev = new;
 }
 
-void insert_before(Node *right, Node *new)
+void list_insert_before(Node *right, Node *new)
 {
-    insert_after(right->prev, new);
+    list_insert(right->prev, new);
 }
 
-void init(Node *list)
+void list_init(Node *list)
 {
     if (list != NULL)
     {
@@ -98,29 +98,29 @@ void list_remove(Node *node)
     right->prev = left;
 }
 
-void remove_after(Node *left)
+void list_remove_after(Node *left)
 {
     list_remove(left->next);
 }
 
-void remove_before(Node *right)
+void list_remove_before(Node *right)
 {
     list_remove(right->prev);
 }
 
-Node *push_front(Node *list, elem_t elem)
+Node *list_push_front(Node *list, elem_t elem)
 {
     Node *new_note = calloc(1, sizeof(Node));
 
     new_note->data = elem;
-    insert_after(list, new_note);
+    list_insert(list, new_note);
 
     return new_note;
 }
 
-Node *push_back(Node *list, elem_t elem)
+Node *list_push_back(Node *list, elem_t elem)
 {
-    return push_front(list->prev, elem);
+    return list_push_front(list->prev, elem);
 }
 
 elem_t list_delete(Node *list)
@@ -132,25 +132,28 @@ elem_t list_delete(Node *list)
     }
 
     elem_t res = list->data;
+    list->next->prev = list->prev;
+    list->prev->next = list->next;
+
     free(list);
 
     return res;
 }
 
-elem_t pop_front(Node *list)
+elem_t list_pop_front(Node *list)
 {
     return list_delete(list->next);
 }
 
-elem_t pop_back(Node *list)
+elem_t list_pop_back(Node *list)
 {
     return list_delete(list->prev);
 }
 
-void clear(Node *list)
+void list_clear(Node *list)
 {
-    while (!is_empty(list))
-        pop_front(list);
+    while (!list_is_empty(list))
+        list_pop_front(list);
 }
 
 void print_it(elem_t elem, void *arg)
@@ -183,3 +186,72 @@ elem_t list_sum(Node *list)
 
     return res;
 }
+
+int main()
+{
+    struct Node x[10];
+	struct Node * a = malloc(sizeof(struct Node));
+	struct Node * b = malloc(sizeof(struct Node));
+
+	list_init(a);
+	list_init(b);
+	// End of test 1
+	
+	for(int i=0; i<10; i++) {
+		x[i].data = i;
+		list_insert(a, &x[i]);
+	}
+	list_print(a);   // 9 8 7 6 5 4 3 2 1 0 
+	// End of test 2
+	
+	list_remove(&x[5]);
+	list_print(a);
+	list_remove(&x[0]);
+	list_print(a);
+	list_remove(&x[9]);
+	list_print(a);
+	// End of test 3
+	
+	list_insert_before(a, &x[0]);
+	list_print(a);
+	list_insert(a, &x[9]);
+	list_print(a);
+	list_insert(&x[6], &x[5]);
+	list_print(a);
+	// End of test 4
+	
+	while(!list_is_empty(a))
+		list_remove(a->next);
+	// End of test 5
+
+	for(int i=0; i<10; i++)
+		list_push_back(a, i);
+	list_print(a);
+	// End of test 6
+	
+	for(int i=0; i<10; i++)
+		list_push_front(b, list_pop_back(a));
+	list_print(b);
+	// End of test 7
+	
+	for(int i=0; i<10; i++) {
+		list_push_front(a, i);
+		list_pop_front(b);
+	}
+	list_print(a);
+	// End of test 8
+
+	for(int i=0; i<10; i++)
+		list_push_back(b, list_pop_front(a));
+	list_print(b);
+	// End of test 9
+	
+	list_clear(a);
+	list_clear(b);
+	// End of test 10
+
+    list_delete(a);
+    list_delete(b);
+    
+    return 0;
+} 

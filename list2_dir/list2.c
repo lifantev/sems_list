@@ -187,6 +187,7 @@ elem_t list_sum(Node *list)
     return res;
 }
 
+#ifdef MAIN
 int main()
 {
     struct Node x[10];
@@ -252,6 +253,7 @@ int main()
 
     list_delete(a);
     list_delete(b);
-    
+
     return 0;
 } 
+#endif // MAIN
